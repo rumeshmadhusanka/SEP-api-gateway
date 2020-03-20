@@ -1,0 +1,18 @@
+{
+  "name": "redis-node",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "@types/amqplib": "^0.5.13",
+    "@types/mongodb": "^3.5.0",
+    "bluebird": "latest",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "express-ipfilter": "^1.1.1",
+    "mongodb": "^3.5.4",
+    "dotenv": "latest"
+  }
+}
