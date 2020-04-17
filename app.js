@@ -9,12 +9,32 @@ const sendToMongo = require('./sendToMongo');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const url = require('url');
 const app = express();
+const fs = require('fs');
+const yaml = require('js-yaml');
+
 app.set('trust proxy', true);
 app.use(ip_filter(ip_list.black_list, {mode: "deny"}));
 app.use(sendToMongo);
 
 app.use('/', indexRouter);
 app.use('/login',loginRouter);
+
+
+
+try {
+    let fileContents = fs.readFileSync('./proxy-structure.yaml', 'utf8');
+    let data = yaml.safeLoadAll(fileContents);
+
+    for (let i = 0; i < data.length; i++) {
+        app.use(Object.keys(data[i].pathRewrite)[0].toString(),createProxyMiddleware(data[i]));
+        //console.log(Object.keys(data[i].pathRewrite)[0].toString())
+    }
+
+    console.log(data);
+} catch (e) {
+    console.log(e);
+}
+
 
 
 // const pyProxy = httpProxy(process.env.PROXY1,{
@@ -26,20 +46,20 @@ app.use('/login',loginRouter);
 //         return rest[1]
 //     },
 // });
-const optionsPy = {
-    target: process.env.PROXY1, // target host
-    changeOrigin: true, // needed for virtual hosted sites
-    ws: true, // proxy websockets
-    pathRewrite: {
-        '^/py/': '/', // rewrite path
-        // '^/api/remove/path': '/path' // remove base path
-    },
-    router: {
-        // when request.headers.host == 'dev.localhost:3000',
-        // override target 'http://www.example.org' to 'http://localhost:8000'
-
-    },
-};
+// const optionsPy = {
+//     target: process.env.PROXY1, // target host
+//     changeOrigin: true, // needed for virtual hosted sites
+//     ws: true, // proxy websockets
+//     pathRewrite: {
+//         '^/py/': '/', // rewrite path
+//         // '^/api/remove/path': '/path' // remove base path
+//     },
+//     router: {
+//         // when request.headers.host == 'dev.localhost:3000',
+//         // override target 'http://www.example.org' to 'http://localhost:8000'
+//
+//     },
+// };
 // const optionsJs = {
 //     target: process.env.PROXY2, // target host
 //     changeOrigin: true, // needed for virtual hosted sites
@@ -56,9 +76,9 @@ const optionsPy = {
 // };
 
 
-const pyProxy = createProxyMiddleware(optionsPy);
+//const pyProxy = createProxyMiddleware(optionsPy);
 // const jsProxy = createProxyMiddleware(optionsJs);
-app.use('/py/',pyProxy);
+//app.use('/py/',pyProxy);
 // app.use('/js/',jsProxy);
 
 module.exports = app;

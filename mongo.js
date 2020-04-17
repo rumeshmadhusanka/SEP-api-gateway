@@ -10,10 +10,14 @@ function MongoLogger() {
 }
 
 MongoLogger.prototype.sendMessage = async function(message) {
-    MongoClient.connect(connectionURL, {useNewUrlParser: true, useUnifiedTopology: true}, async(err,db)=>{
-        let dbo = db.db(databaseName);
-         dbo.collection(collection_name).insertOne(message);
-    });
+    try {
+        MongoClient.connect(connectionURL, {useNewUrlParser: true, useUnifiedTopology: true}, async (err, db) => {
+            let dbo = db.db(databaseName);
+            dbo.collection(collection_name).insertOne(message);
+        });
+    }catch (e) {
+        console.log(e);
+    }
 };
 
 
