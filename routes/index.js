@@ -1,42 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const blackList = require('../IPList');
-// const redis = require('redis');
-// const client = redis.createClient(6379, '127.0.0.1');
-// const send = require('./send');
-// const rec = require('./rec');
-/* GET home page. */
+const os = require('os');
+const fetch = require('node-fetch');
+
 router.get('/', async function (req, res, next) {
     let msg = req.params['msg'];
-    // client.on('connect', function() {
-    //   console.log('connected');
-    // });
-    // client.set(['b764buyf4buhundjkfsnjr75y4u85', 'rumesh'], function(err, reply) {
-    //   console.log(reply);
-    // });
-    // client.get('b764buyf4buhundjkfsnjr75y4u85', function(err, reply) {
-    //   console.log(reply);
-    // });
-
-    // client.expire('b764buyf4buhundjkfsnjr75y4u85',2, function(err, reply) {
-    //   console.log(reply);
-    // });
-
-    // client.get('b764buyf4buhundjkfsnjr75y4u85', function(err, reply) {
-    //   console.log(reply);
-    // });
-    // client.hmset('frameworks', 'javascript', 'AngularJS', 'css', 'Bootstrap', 'node', 'Express');
-    //
-    // client.hgetall('frameworks', function(err, object) {
-    //   console.log(object);
-    // });
-
-    // for (let i = 0; i < 100; i++) {
-    //     send(1, 1, 1);
-    // }
-    // rec();
-
-
     res.send({"title": 'Express'});
 });
 
@@ -82,6 +51,58 @@ router.delete('/blacklist/all', async function (req, res, next) {
         console.log(e);
         res.status(502).send();
     }
+});
+
+String.prototype.toHHMMSS = function () {
+    const sec_num = parseInt(this, 10);
+    let hours = Math.floor(sec_num / 3600);
+    let minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+    let seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+    if (hours < 10) {
+        hours = "0" + hours;
+    }
+    if (minutes < 10) {
+        minutes = "0" + minutes;
+    }
+    if (seconds < 10) {
+        seconds = "0" + seconds;
+    }
+    return hours + ':' + minutes + ':' + seconds;
+};
+
+
+router.get('/health', async function (req, res, next) {
+    try {
+        let time = process.uptime();
+        const uptime = (time + "").toHHMMSS();
+
+        let nodes = (process.env.HEALTH_CHECK_NODES).toString();
+        nodes = nodes.split(",");
+        let promise_list = [];
+        for (let i = 0; i < nodes.length; i++) {
+            let prom = await fetch(process.env[(nodes[i]).toString()]+"health");
+            let val = await prom.json();
+            promise_list.push(val)
+        }
+
+
+        let d = {
+            "name": process.env.NODE_NAME,
+            "cpu": os.cpus()[0].speed,
+            "uptime": uptime,
+            "free mem": os.freemem() / (1024 * 1024),
+            "total mem": os.totalmem() / (1024 * 1024),
+            "load avg": os.loadavg()[0],
+
+        };
+        promise_list.push(d);
+        res.json(promise_list);
+    } catch (e) {
+        console.log(e);
+        res.status(502).send();
+    }
+
 });
 
 

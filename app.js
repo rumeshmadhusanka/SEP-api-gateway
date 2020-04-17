@@ -1,19 +1,20 @@
-const express = require('express');
 require('dotenv').config();
+const express = require('express');
 const ip_filter = require('express-ipfilter').IpFilter;
 const ip_list = require('./IPList');
 const indexRouter = require('./routes/index');
+const loginRouter = require('./routes/login');
 const sendToMongo = require('./sendToMongo');
 // const httpProxy = require('express-http-proxy');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const url = require('url');
-
 const app = express();
 app.set('trust proxy', true);
 app.use(ip_filter(ip_list.black_list, {mode: "deny"}));
 app.use(sendToMongo);
 
 app.use('/', indexRouter);
+app.use('/login',loginRouter);
 
 
 // const pyProxy = httpProxy(process.env.PROXY1,{
