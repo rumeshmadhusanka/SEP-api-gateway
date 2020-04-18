@@ -11,6 +11,7 @@ const url = require('url');
 const app = express();
 const fs = require('fs');
 const yaml = require('js-yaml');
+const auth = require('./middleware/auth');
 
 app.set('trust proxy', true);
 app.use(ip_filter(ip_list.black_list, {mode: "deny"}));
@@ -26,7 +27,7 @@ try {
     let data = yaml.safeLoadAll(fileContents);
 
     for (let i = 0; i < data.length; i++) {
-        app.use(Object.keys(data[i].pathRewrite)[0].toString(),createProxyMiddleware(data[i]));
+        app.use(Object.keys(data[i].pathRewrite)[0].toString(),auth.verifyToken,createProxyMiddleware(data[i]));
         //console.log(Object.keys(data[i].pathRewrite)[0].toString())
     }
 
