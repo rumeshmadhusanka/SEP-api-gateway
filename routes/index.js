@@ -95,9 +95,9 @@ router.get('/health', async function (req, res, next) {
             "name": process.env.NODE_NAME,
             "cpu": os.cpus()[0].speed,
             "uptime": uptime,
-            "free mem": os.freemem() / (1024 * 1024),
-            "total mem": os.totalmem() / (1024 * 1024),
-            "load avg": os.loadavg()[0],
+            "free_mem": os.freemem() / (1024 * 1024),
+            "total_mem": os.totalmem() / (1024 * 1024),
+            "load_avg": os.loadavg()[0],
 
         };
         promise_list.push(d);
