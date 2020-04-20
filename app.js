@@ -14,8 +14,18 @@ const yaml = require('js-yaml');
 const auth = require('./middleware/auth');
 
 app.set('trust proxy', true);
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', '*');
+    res.setHeader("Access-Control-Allow-Credentials", true);
+    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization,x-access-token");
+    res.setHeader('Access-Control-Expose-Headers', '*');
+    //Access-Control-Expose-Headers: *
+    next();
+});
 app.use(ip_filter(ip_list.black_list, {mode: "deny"}));
 app.use(sendToMongo);
+
 
 app.use('/', indexRouter);
 app.use('/login',loginRouter);

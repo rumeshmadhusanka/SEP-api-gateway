@@ -81,9 +81,13 @@ router.get('/health', async function (req, res, next) {
         nodes = nodes.split(",");
         let promise_list = [];
         for (let i = 0; i < nodes.length; i++) {
-            let prom = await fetch(process.env[(nodes[i]).toString()]+"health");
-            let val = await prom.json();
-            promise_list.push(val)
+            try {
+                let prom = await fetch(process.env[(nodes[i]).toString()] + "health");
+                let val = await prom.json();
+                promise_list.push(val)
+            }catch (e1) {
+                console.log(e1)
+            }
         }
 
 

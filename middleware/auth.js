@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const logout_token_cache = require('cache');
+const logout_token_cache = require('./cache');
 
 
 const config = {

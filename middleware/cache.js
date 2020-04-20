@@ -43,7 +43,7 @@ CacheManager.prototype.syncCacheWithRedis = () => {
 						if (e) {
 							console.log(e)
 						} else {
-							console.log(keys[i], result, t);
+							//console.log(keys[i], result, t);
 							if (t !== -1 || t !== false) {
 								node_cache.set(keys[i], 1, t)
 
@@ -62,7 +62,7 @@ CacheManager.prototype.syncCacheWithRedis = () => {
 
 const instance = new CacheManager();
 instance.syncCacheWithRedis();
-setInterval(instance.syncCacheWithRedis, process.env.REDIS_NODE_CACHE_SYNC_PERIOD);
+//setInterval(instance.syncCacheWithRedis, process.env.REDIS_NODE_CACHE_SYNC_PERIOD);   //todo turn on this to enable cache sync
 module.exports = instance;
 
 
