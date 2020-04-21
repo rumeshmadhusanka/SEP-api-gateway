@@ -6,7 +6,7 @@ const fetch = require('node-fetch');
 
 router.get('/', async function (req, res, next) {
     let msg = req.params['msg'];
-    res.send({"title": 'Express'});
+    await res.status(404).json({"message": 'ERR::Default route'});
 });
 
 
@@ -15,7 +15,16 @@ router.get('/blacklist', async function (req, res, next) {
         res.status(200).send(blackList.black_list.toString());
     } catch (e) {
         console.log(e);
-        res.status(502).send();
+        await res.status(502).json({"message": e.name + " " + e.message})
+    }
+
+});
+router.get('/whitelist', async function (req, res, next) {
+    try {
+        res.status(200).send(blackList.white_list.toString());
+    } catch (e) {
+        console.log(e);
+        await res.status(502).json({"message": e.name + " " + e.message})
     }
 
 });
@@ -23,11 +32,33 @@ router.get('/blacklist', async function (req, res, next) {
 router.post('/blacklist', async function (req, res, next) {
     let ip = req.body.ip;
     try {
-        await blackList.addIPtoBlackList(ip);
-        res.status(201).send();
+        if (ip){
+            await blackList.addIPtoBlackList(ip);
+            res.status(201).send();
+        }else {
+            res.status(401).json({"message":"ERR::Invalid ip address/host name"})
+        }
+
     } catch (e) {
         console.log(e);
-        res.status(502).send();
+        await res.status(502).json({"message": e.name + " " + e.message})
+    }
+
+});
+
+router.post('/whitelist', async function (req, res, next) {
+    let ip = req.body.ip;
+    try {
+        if (ip){
+            await blackList.addToWhiteList(ip);
+            res.status(201).send();
+        }else {
+            res.status(401).json({"message":"ERR::Invalid ip address/host name"})
+        }
+
+    } catch (e) {
+        console.log(e);
+        await res.status(502).json({"message": e.name + " " + e.message})
     }
 
 });
@@ -39,17 +70,28 @@ router.delete('/blacklist', async function (req, res, next) {
         res.status(200).send();
     } catch (e) {
         console.log(e);
-        res.status(502).send();
+        await res.status(502).json({"message": e.name + " " + e.message})
     }
 });
 
-router.delete('/blacklist/all', async function (req, res, next) {
+router.delete('/whitelist', async function (req, res, next) {
+    let ip = req.body.ip;
+    try {
+        await blackList.removeIPFromWhiteList(ip);
+        res.status(200).send();
+    } catch (e) {
+        console.log(e);
+        await res.status(502).json({"message": e.name + " " + e.message})
+    }
+});
+
+router.delete('/iplist/all', async function (req, res, next) {
     try {
         await blackList.clearAll();
         res.status(200).send();
     } catch (e) {
         console.log(e);
-        res.status(502).send();
+        await res.status(502).json({"message": e.name + " " + e.message})
     }
 });
 
@@ -101,10 +143,10 @@ router.get('/health', async function (req, res, next) {
 
         };
         promise_list.push(d);
-        res.json(promise_list);
+        await res.json(promise_list);
     } catch (e) {
         console.log(e);
-        res.status(502).send();
+        await res.status(502).json({"message": e.name + " " + e.message})
     }
 
 });
