@@ -5,13 +5,17 @@ const ip_list = require('./IPList');
 const indexRouter = require('./routes/index');
 const loginRouter = require('./routes/login');
 const sendToMongo = require('./sendToMongo');
-// const httpProxy = require('express-http-proxy');
 const { createProxyMiddleware } = require('http-proxy-middleware');
-const url = require('url');
 const app = express();
 const fs = require('fs');
 const yaml = require('js-yaml');
 const auth = require('./middleware/auth');
+const rateLimit = require("express-rate-limit");
+
+const limiter = rateLimit({
+    windowMs:  1000*60, // 1 min
+    max: 600 // limit each IP to 600 requests per windowMs
+});
 
 app.set('trust proxy', true);
 app.use((req, res, next) => {
@@ -23,12 +27,13 @@ app.use((req, res, next) => {
     //Access-Control-Expose-Headers: *
     next();
 });
+app.use(limiter);
 app.use(ip_filter(ip_list.black_list, {mode: "deny"}));
 app.use(sendToMongo);
 
 
 app.use('/', indexRouter);
-app.use('/login',loginRouter);
+app.use('/auth',loginRouter);
 
 
 
@@ -45,51 +50,5 @@ try {
 } catch (e) {
     console.log(e);
 }
-
-
-
-// const pyProxy = httpProxy(process.env.PROXY1,{
-//     preserveHostHdr: true,
-//     parseReqBody: false,
-//     proxyReqPathResolver: req => {
-//         let ori= req.originalUrl;
-//         let rest= ori.split('/py');
-//         return rest[1]
-//     },
-// });
-// const optionsPy = {
-//     target: process.env.PROXY1, // target host
-//     changeOrigin: true, // needed for virtual hosted sites
-//     ws: true, // proxy websockets
-//     pathRewrite: {
-//         '^/py/': '/', // rewrite path
-//         // '^/api/remove/path': '/path' // remove base path
-//     },
-//     router: {
-//         // when request.headers.host == 'dev.localhost:3000',
-//         // override target 'http://www.example.org' to 'http://localhost:8000'
-//
-//     },
-// };
-// const optionsJs = {
-//     target: process.env.PROXY2, // target host
-//     changeOrigin: true, // needed for virtual hosted sites
-//     ws: true, // proxy websockets
-//     pathRewrite: {
-//         '^/js': '/', // rewrite path
-//         // '^/api/remove/path': '/path' // remove base path
-//     },
-//     router: {
-//         // when request.headers.host == 'dev.localhost:3000',
-//         // override target 'http://www.example.org' to 'http://localhost:8000'
-//
-//     },
-// };
-
-
-//const pyProxy = createProxyMiddleware(optionsPy);
-// const jsProxy = createProxyMiddleware(optionsJs);
-//app.use('/py/',pyProxy);
-// app.use('/js/',jsProxy);
 
 module.exports = app;
