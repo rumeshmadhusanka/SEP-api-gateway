@@ -62,7 +62,7 @@ CacheManager.prototype.syncCacheWithRedis = () => {
 
 const instance = new CacheManager();
 instance.syncCacheWithRedis();
-//setInterval(instance.syncCacheWithRedis, process.env.REDIS_NODE_CACHE_SYNC_PERIOD);   //todo turn on this to enable cache sync
+setInterval(instance.syncCacheWithRedis, process.env.REDIS_NODE_CACHE_SYNC_PERIOD);   //todo turn on this to enable cache sync
 module.exports = instance;
 
 

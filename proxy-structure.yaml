@@ -1,5 +1,5 @@
 --- # PROXY 1
-target: http://localhost:4000/
+target: http://localhost:6000/
 changeOrigin: true
 ws: true
 pathRewrite:
