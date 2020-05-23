@@ -26,7 +26,7 @@ app.use((req, res, next) => {
 	//Access-Control-Expose-Headers: *
 	next();
 });
-app.use(limiter);
+// app.use(limiter);
 app.use(ip_filter(ip_list.black_list, {mode: "deny"}));
 app.use(sendToMongo);
 
@@ -40,14 +40,11 @@ try {
 		console.log(Object.keys(data[i].pathRewrite)[0].toString())
 	}
 
-	console.log(data);
+	// console.log(data);
 } catch (e) {
 	console.log(e);
 }
 
 
 routes(app);
-app.use("/",async (req,res)=>{
-	res.json()
-});
 module.exports = app;

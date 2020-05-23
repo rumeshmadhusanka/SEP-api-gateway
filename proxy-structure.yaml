@@ -1,13 +1,13 @@
 --- # PROXY 1
-target: http://localhost:6000/
+target: https://doctor-module.herokuapp.com/
 changeOrigin: true
 ws: true
 pathRewrite:
-    '^/py/': '/'
+    '^/doctor/': '/'
 
 --- # PROXY 2
-target: http://localhost:4000/
+target: https://receptionist-module.herokuapp.com/
 changeOrigin: true
 ws: true
 pathRewrite:
-    '^/js/': '/'
+    '^/receptionist/': '/'

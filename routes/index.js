@@ -3,6 +3,6 @@ module.exports = function (app) {
 	app.use("/login", require("./login"));
 	//Root route-REMOVE this
 	app.use("/", (req, res) => {
-		res.status(404).json({"message": "Default Route"})
+		res.status(200).json({"message": "Default Route"})
 	});
 };
