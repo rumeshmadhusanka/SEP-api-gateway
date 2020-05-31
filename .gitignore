@@ -13,3 +13,4 @@ yarn-error.log*
 .env.development
 .env.staging
 build
+scratch.txt
