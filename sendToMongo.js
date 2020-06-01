@@ -1,5 +1,5 @@
 const MongoLogger = require('./mongo');
-let logger = new MongoLogger();
+let logger = MongoLogger;
 let sendLog = async (req, res, next) => {
     console.log(req.ip);
     try {
