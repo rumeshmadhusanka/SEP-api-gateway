@@ -27,6 +27,7 @@ app.use((req, res, next) => {
 	next();
 });
 // app.use(limiter);
+app.use('/dashboard',express.static('dashboard'));
 app.use(ip_filter(ip_list.black_list, {mode: "deny"}));
 app.use(sendToMongo);
 
