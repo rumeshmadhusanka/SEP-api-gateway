@@ -10,6 +10,7 @@ const yaml = require('js-yaml');
 const auth = require('./middleware/auth');
 const rateLimit = require("express-rate-limit");
 const routes = require('./routes');
+const os = require('os');
 const limiter = rateLimit({
 	windowMs: 1000 * 60, // 1 min
 	max: 7000 // limit each IP to 600 requests per windowMs
@@ -26,8 +27,51 @@ app.use((req, res, next) => {
 	//Access-Control-Expose-Headers: *
 	next();
 });
-// app.use(limiter);
+
 app.use('/dashboard',express.static('dashboard'));
+String.prototype.toHHMMSS = function () {
+	const sec_num = parseInt(this, 10);
+	let hours = Math.floor(sec_num / 3600);
+	let minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+	let seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+	if (hours < 10) {
+		hours = "0" + hours;
+	}
+	if (minutes < 10) {
+		minutes = "0" + minutes;
+	}
+	if (seconds < 10) {
+		seconds = "0" + seconds;
+	}
+	return hours + ':' + minutes + ':' + seconds;
+};
+
+
+app.get('/health', async function (req, res, next) {
+	try {
+		let time = process.uptime();
+		const uptime = (time + "").toHHMMSS();
+		let promise_list = [];
+
+		let d = {
+			"name": process.env.NODE_NAME,
+			"cpu": os.cpus()[0].speed,
+			"uptime": uptime,
+			"free_mem": os.freemem() / (1024 * 1024),
+			"total_mem": os.totalmem() / (1024 * 1024),
+			"load_avg": os.loadavg()[0],
+
+		};
+		promise_list.push(d);
+		await res.json(promise_list);
+	} catch (e) {
+		console.log(e);
+		await res.status(502).json({"message": e.name + " " + e.message})
+	}
+
+});
+// app.use(limiter);
 app.use(ip_filter(ip_list.black_list, {mode: "deny"}));
 app.use(sendToMongo);
 
