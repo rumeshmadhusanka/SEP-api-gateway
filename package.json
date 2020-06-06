@@ -28,7 +28,6 @@
     "mongodb": "^3.5.4",
     "node-cache": "^5.1.0",
     "node-fetch": "^2.6.0",
-    "redis": "^3.0.2",
     "should": "^13.2.3",
     "sqlite3": "^4.2.0"
   },
