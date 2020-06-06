@@ -15,7 +15,7 @@
     "@types/mongodb": "^3.5.0",
     "bcryptjs": "^2.4.3",
     "bluebird": "latest",
-    "body-parser": "latest",
+    "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
     "debug": "~2.6.9",
     "dotenv": "^8.2.0",
