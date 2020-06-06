@@ -7,21 +7,21 @@ const config = {
 };
 let login = new Login();
 
-router.use('/', async (req, res, next) => {
-	let data = "";
-	req.on('data', function (chunk) {
-		data += chunk
-	});
-	req.on('end', function () {
-		req.rawBody = data;
-		req.jsonBody = JSON.parse(data);
-		next();
-	});
-});
+// router.use('/', async (req, res, next) => {
+// 	let data = "";
+// 	req.on('data', function (chunk) {
+// 		data += chunk
+// 	});
+// 	req.on('end', function () {
+// 		req.rawBody = data;
+// 		req.body = JSON.parse(data);
+// 		next();
+// 	});
+// });
 
 router.post('/', async (req, res) => {
-	let username = req.jsonBody.username;
-	let password = req.jsonBody.password;
+	let username = req.body.username;
+	let password = req.body.password;
 	console.log(username);
 	console.log(password);
 	let r = await login.login(username, password);
