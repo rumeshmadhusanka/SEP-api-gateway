@@ -1,17 +1,24 @@
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+
+
 module.exports = function (app) {
-	app.use('/', async (req, res, next) => {
-		let data = "";
-		req.on('data', function (chunk) {
-			data += chunk
-		});
-		req.on('end', function () {
-			req.rawBody = data;
-			if (data){
-				req.body = JSON.parse(data);
-			}
-			next();
-		});
-	});
+	// app.use('/', async (req, res, next) => {
+	// 	let data = "";
+	// 	req.on('data', function (chunk) {
+	// 		data += chunk
+	// 	});
+	// 	req.on('end', function () {
+	// 		req.rawBody = data;
+	// 		if (data){
+	// 			req.body = JSON.parse(data);
+	// 		}
+	// 		next();
+	// 	});
+	// });
+	app.use(bodyParser.urlencoded({ extended: true }));
+	app.use(bodyParser.json());
+	app.use(cookieParser());
 	app.use("/iplist", require("./iplist"));
 	app.use("/login", require("./login"));
 	//Root route-REMOVE this
