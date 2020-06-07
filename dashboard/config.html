@@ -86,12 +86,12 @@
             <div class="col-md-5">
                 <div class="card">
                     <table class="table-stripe">
-                        <tr><td>Target</td><td><input type="text" placeholder="target"></td></tr>
-                        <tr><td>changeOrigin</td><td><input type="text" placeholder="true/false"></td></tr>
-                        <tr><td>ws</td><td><input type="text" placeholder="true/false"></td></tr>
+                        <tr><td>Target</td><td><input type="text" placeholder="target" id="route-target"></td></tr>
+                        <tr><td>changeOrigin</td><td><input type="text" placeholder="true/false" id="route-changeOrigin"></td></tr>
+                        <tr><td>ws</td><td><input type="text" placeholder="true/false" id="route-ws"></td></tr>
                         <tr><td>pathRewrite:</td></tr>
-                        <tr><td><input type="text" placeholder="from path"></td><td><input type="text" placeholder="to path"></td></tr>
-                        <tr><td><input type="button" value="Add Route" class="btn btn-default"></td><td></td></tr>
+                        <tr><td><input type="text" placeholder="from path" id="route-pathKey"></td><td><input type="text" placeholder="to path" id="route-pathVal"></td></tr>
+                        <tr><td><input type="button" value="Add Route" class="btn btn-default" onclick="addNewRoute()"></td><td></td></tr>
                     </table>
 
                 </div>
@@ -275,6 +275,60 @@
 		getBlackList();
 		getWhiteList();
 	});
+
+	async function addNewRoute() {
+		let target = $('#route-target').val();
+		let changeOrigin = $('#route-changeOrigin').val() === "true";
+		let ws = $('#route-ws').val() === "true";
+		let fromPath = $('#route-pathKey');
+        let toPath = $('#route-pathVal');
+
+        let data = {
+        	target: target,
+            changeOrigin: changeOrigin,
+            ws: ws,
+			pathRewrite:{}
+        };
+        data.pathRewrite[fromPath] = toPath;
+		const url = "../proxy";
+		let options = {
+			method: 'POST', // *GET, POST, PUT, DELETE, etc.
+			mode: 'cors', // no-cors, *cors, same-origin
+			cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+			credentials: 'same-origin', // include, *same-origin, omit
+			headers: {
+				'Content-Type': 'application/json',
+				'x-access-token': await localStorage.getItem("x-access-token")
+			},
+			redirect: 'follow', // manual, *follow, error
+			referrerPolicy: 'no-referrer',
+            body: JSON.stringify({object:data})
+        };
+		let response =  await fetch(url, options);
+		if (response.status === 200){
+			// alert("Route added successfully");
+        }
+		let json_response = await response.json();
+		console.log(json_response);
+		alert(JSON.stringify(json_response))
+
+	}
+
+	function deleteRoute(route) {
+
+	}
+	function addIPtoBlackList(ip) {
+
+	}
+	function removeIPFromBlackList(ip) {
+
+	}
+	function addIPtoWhiteList(ip) {
+
+	}
+	function removeIPFromWhitelist(ip) {
+
+	}
 </script>
 
 </body>
