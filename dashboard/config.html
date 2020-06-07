@@ -91,8 +91,9 @@
                         <tr><td>ws</td><td><input type="text" placeholder="true/false"></td></tr>
                         <tr><td>pathRewrite:</td></tr>
                         <tr><td><input type="text" placeholder="from path"></td><td><input type="text" placeholder="to path"></td></tr>
-
+                        <tr><td><input type="button" value="Add Route" class="btn btn-default"></td><td></td></tr>
                     </table>
+
                 </div>
             </div>
 
@@ -105,8 +106,8 @@
         <div class="container">
             <div class="row">
                 <ul class="list-inline" id="blackList">
-                    <li>efvgbthnyju</li>
-                    <li>cdfgb</li>
+<!--                    <li>efvgbthnyju</li>-->
+<!--                    <li>cdfgb</li>-->
                 </ul>
             </div>
         </div>
@@ -127,8 +128,8 @@
         <div class="row"><h3>Whitelisted IPs</h3></div>
         <div class="row">
             <ul class="list-inline" id="whiteList">
-                <li>dfghjk</li>
-                <li>hgjytfgvc</li>
+<!--                <li>dfghjk</li>-->
+<!--                <li>hgjytfgvc</li>-->
             </ul>
         </div>
 
@@ -221,9 +222,58 @@
 
 
     }
+    async function getBlackList(){
+		const url = "../iplist/blacklist";
+		let options = {
+			method: 'GET', // *GET, POST, PUT, DELETE, etc.
+			mode: 'cors', // no-cors, *cors, same-origin
+			cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+			credentials: 'same-origin', // include, *same-origin, omit
+			headers: {
+				'Content-Type': 'application/json',
+				'x-access-token': await localStorage.getItem("x-access-token")
+			},
+			redirect: 'follow', // manual, *follow, error
+			referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+		};
+		let response =  await fetch(url, options);
+		let json_response = await response.json();
+		for (let i = 0; i < json_response.length; i++) {
+            let template=
+                `<li>${json_response[i]}</li>`;
+            $(template).appendTo("#blackList");
+            console.log(json_response)
+		}
+
+    }
+    async function getWhiteList(){
+		const url = "../iplist/whitelist";
+		let options = {
+			method: 'GET', // *GET, POST, PUT, DELETE, etc.
+			mode: 'cors', // no-cors, *cors, same-origin
+			cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+			credentials: 'same-origin', // include, *same-origin, omit
+			headers: {
+				'Content-Type': 'application/json',
+				'x-access-token': await localStorage.getItem("x-access-token")
+			},
+			redirect: 'follow', // manual, *follow, error
+			referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+		};
+		let response =  await fetch(url, options);
+		let json_response = await response.json();
+		for (let i = 0; i < json_response.length; i++) {
+			let template=
+				`<li>${json_response[i]}</li>`;
+			$(template).appendTo("#whiteList");
+			console.log(json_response)
+		}
+    }
 
 	$(document).ready( function() {
 		getRoutesTable();
+		getBlackList();
+		getWhiteList();
 	});
 </script>
 
