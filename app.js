@@ -12,8 +12,8 @@ const rateLimit = require("express-rate-limit");
 const routes = require('./routes');
 const os = require('os');
 const limiter = rateLimit({
-	windowMs: 1000 * 60, // 1 min
-	max: 7000 // limit each IP to 600 requests per windowMs
+	windowMs: process.env.RATE_LIMITER_WINDOWMS, // 1 min
+	max: process.env.RATE_LIMITER_MAX // limit each IP to 600 requests per windowMs
 });
 
 
@@ -71,7 +71,7 @@ app.get('/health', async function (req, res, next) {
 	}
 
 });
-// app.use(limiter);
+app.use(limiter);
 app.use(ip_filter(ip_list.black_list, {mode: "deny"}));
 app.use(sendToMongo);
 
