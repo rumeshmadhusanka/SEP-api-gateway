@@ -44,10 +44,10 @@
     }
 
     </style>
+
+
 </head>
-
 <body>
-
 <div class="section text-center">
     <img src="assets/img/aws-api-gateway.svg" id="icon"><h2 class="h1">API Gateway Configuration</h2>
     <br><br>
@@ -181,6 +181,23 @@
 <!--  Google Maps Plugin    -->
 <!-- Control Center for Material Kit: parallax effects, scripts for the example pages etc -->
 <script src="./assets/js/material-kit.js?v=2.0.7" type="text/javascript"></script>
+
+<script type="application/javascript">
+	<!-- Check whether login is success-->
+	async function check_login() {
+		var token = await localStorage.getItem("x-access-token");
+		if (!token){
+			$("body").empty();
+            alert("Not authorized, please sign in!");
+			window.location.href = "./index.html";
+		}
+	}
+	check_login();
+
+	$(document).ready(function() {
+		
+	});
+</script>
 
 </body>
 </html>
