@@ -28,7 +28,7 @@ app.use((req, res, next) => {
 	next();
 });
 
-app.use('/dashboard',express.static('dashboard'));
+app.use('/dashboard', express.static('dashboard'));
 String.prototype.toHHMMSS = function () {
 	const sec_num = parseInt(this, 10);
 	let hours = Math.floor(sec_num / 3600);
@@ -96,26 +96,51 @@ try {
 		res.json(proxy_object_list)
 	});
 
-	app.post('/proxy', function (req, res) {
+	app.post('/proxy',  function (req, res) {
 		try {
-			// let path = req.body.path;
-			// let object = req.body.object;
-			let path = "^/doctor1/";
-			let object = {
-				target: 'https://google.com/',
-				changeOrigin: true,
-				ws: true,
-				pathRewrite: {'^/doctor1/': '/'}
-			};
+
+			let data = "";
+
+			 req.on('data', function (chunk) {
+				data += chunk
+			});
+			 req.on('end', function () {
+				req.rawBody = data;
+				if (data) {
+					req.body = JSON.parse(data);
+				}
+				try {
+					console.log("Inside");
+					// let path = req.body.path;
+					let object = req.body.object;
+					console.log(object);
+					let func_name = Object.keys(object.pathRewrite)[0].toString().slice(2, -1);
+					// object = {
+					// 	target: 'https://google.com/',
+					// 	changeOrigin: true,
+					// 	ws: true,
+					// 	pathRewrite: {'^/doctor1/': '/'}
+					// };
+					console.log("proxy func list", proxy_function_list);
+					console.log("proxy obj list", proxy_object_list);
+
+					proxy_function_list[func_name] = function newFunc() {
+						return createProxyMiddleware(object);
+					};
+					app.use("/" + func_name, proxy_function_list[func_name]());
+					proxy_object_list.push(object);
+					res.json({
+						"mgs": "Path created",
+						"path": object,
+						"target": data[0].target
+					})
+				}catch (e) {
+					res.status(502).json({"message": e.toString()});
+				}
+
+			});
 
 
-			app.use(path, proxy_function_list[path]());
-			proxy_object_list.push(object);
-			res.json({
-				"mgs": "Path created",
-				"path": object,
-				"target": data[0].target
-			})
 
 		} catch (e) {
 			res.status(404).json({"message": e.toString()});
@@ -128,6 +153,7 @@ try {
 	app.delete('/proxy/:r', function (req, res) {
 		try {
 			let r = req.params.r;
+			console.log(r);
 			let routes = app._router.stack;
 			routes.forEach(removeMiddleware);
 
