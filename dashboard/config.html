@@ -58,33 +58,20 @@
 
         <div class="row" id="configuredRoutes">
 
-            <div class="col-md-5">
-                <div class="card">
-                    <table class="table table-stripe">
-                        <tr><td>Name</td><td>doctor</td></tr>
-                        <tr><td>Target</td><td>https://doctor-module.herokuapp.com/</td></tr>
-                        <tr><td>changeOrigin</td><td>true</td></tr>
-                        <tr><td>ws</td><td>true</td></tr>
-                        <tr><td>pathRewrite:</td><td></td></tr>
-                        <tr><td>^/doctor/</td><td>/</td></tr>
-                        <tr><td><input class="btn btn-danger" type="button" value="Delete Route"></td><td></td></tr>
-                    </table>
-                </div>
-            </div>
+<!--            <div class="col-md-5">-->
+<!--                <div class="card">-->
+<!--                    <table class="table table-stripe">-->
+<!--                        <tr><td>Name</td><td>doctor</td></tr>-->
+<!--                        <tr><td>Target</td><td>https://doctor-module.herokuapp.com/</td></tr>-->
+<!--                        <tr><td>changeOrigin</td><td>true</td></tr>-->
+<!--                        <tr><td>ws</td><td>true</td></tr>-->
+<!--                        <tr><td>pathRewrite:</td><td></td></tr>-->
+<!--                        <tr><td>^/doctor/</td><td>/</td></tr>-->
+<!--                        <tr><td><input class="btn btn-danger" type="button" value="Delete Route"></td><td></td></tr>-->
+<!--                    </table>-->
+<!--                </div>-->
+<!--            </div>-->
 
-            <div class="col-md-5">
-                <div class="card">
-                    <table class="table table-stripe">
-                        <tr><td>Name</td><td>doctor</td></tr>
-                        <tr><td>Target</td><td>https://doctor-module.herokuapp.com/</td></tr>
-                        <tr><td>changeOrigin</td><td>true</td></tr>
-                        <tr><td>ws</td><td>true</td></tr>
-                        <tr><td>pathRewrite:</td></tr>
-                        <tr><td>^/doctor/</td><td>/</td></tr>
-                        <tr><td><input class="btn btn-danger" type="button" value="Delete Route"></td></tr>
-                    </table>
-                </div>
-            </div>
 
 
 
@@ -194,8 +181,49 @@
 	}
 	check_login();
 
-	$(document).ready(function() {
-		
+	async function getRoutesTable(){
+		const url = "../proxy";
+		let options = {
+			method: 'GET', // *GET, POST, PUT, DELETE, etc.
+			mode: 'cors', // no-cors, *cors, same-origin
+			cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+			credentials: 'same-origin', // include, *same-origin, omit
+			headers: {
+				'Content-Type': 'application/json',
+                'x-access-token': await localStorage.getItem("x-access-token")
+			},
+			redirect: 'follow', // manual, *follow, error
+			referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+		};
+		let response =  await fetch(url, options);
+		let json_response = await response.json();
+		for (let i = 0; i < json_response.length; i++) {
+			let routeTableStructure =
+				`<div class="col-md-5">
+                <div class="card">
+                    <table class="table table-stripe">
+                        <tr><td>Name</td><td>${Object.keys(json_response[i].pathRewrite)[0].toString().slice(2, -1)}</td></tr>
+                        <tr><td>Target</td><td>${json_response[i].target}</td></tr>
+                        <tr><td>changeOrigin</td><td>${json_response[i].changeOrigin}</td></tr>
+                        <tr><td>ws</td><td>${json_response[i].ws}</td></tr>
+                        <tr><td>pathRewrite:</td><td></td></tr>
+                        <tr><td>${Object.keys(json_response[i].pathRewrite)[0]}</td><td>${Object.values(json_response[i].pathRewrite)[0]}</td></tr>
+                        <tr><td><input class="btn btn-danger" type="button" value="Delete Route"></td><td></td></tr>
+                    </table>
+                </div>
+            </div>`;
+            console.log(routeTableStructure);
+           $(routeTableStructure).appendTo("#configuredRoutes")
+		}
+
+
+
+
+
+    }
+
+	$(document).ready( function() {
+		getRoutesTable();
 	});
 </script>
 
