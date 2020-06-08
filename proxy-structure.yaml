@@ -11,3 +11,17 @@ changeOrigin: true
 ws: true
 pathRewrite:
     '^/receptionist/': '/'
+
+--- # PROXY 3
+target: https://report-uploading.herokuapp.com/
+changeOrigin: true
+ws: true
+pathRewrite:
+    '^/reportupload/': '/'
+
+--- # PROXY 4
+target: https://billing--app.herokuapp.com/
+changeOrigin: true
+ws: true
+pathRewrite:
+    '^/billing/': '/'
