@@ -180,6 +180,11 @@ try {
 
 	});
 
+	app.get('/ratelimit', auth.verifyToken, async (req, res) => {
+		res.json({"window": process.env.RATE_LIMITER_WINDOWMS, "rate": process.env.RATE_LIMITER_MAX});
+
+	})
+
 
 } catch (e) {
 	console.log(e);
