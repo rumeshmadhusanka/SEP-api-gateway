@@ -13,9 +13,9 @@ module.exports = {
             if (!token) {
                 return res.status(403).json({"message": "ERR::LOGIN_TO_PROCEED"});
             }
-            if (logout_token_cache.get(token)) {
-                return res.status(403).json({"message": "ERR::TOKEN_LOGGED_OUT"});
-            }
+            // if (logout_token_cache.get(token)) {
+            //     return res.status(403).json({"message": "ERR::TOKEN_LOGGED_OUT"});
+            // }
 
             jwt.verify(token, config.secret, (error, decoded) => {
                 if (error) {
@@ -30,9 +30,9 @@ module.exports = {
         }
     },
 
-    invalidateToken: async (token) => {
-
-    }
+    // invalidateToken: async (token) => {
+    //
+    // }
 
 
 };
