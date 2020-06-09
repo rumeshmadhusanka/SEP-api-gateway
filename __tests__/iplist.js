@@ -56,7 +56,6 @@ it('POST blacklist', function (done) {
 		.post('/iplist/blacklist')
 		.set('Accept', 'application/json')
 		.send({ip: '123456789'})
-		.expect('Content-Type', /json/)
 		.end(function (err, res) {
 			if (err) return done(err);
 			done();
