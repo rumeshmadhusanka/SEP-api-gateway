@@ -146,6 +146,18 @@
                 </tr>
             </table>
         </div>
+        <div class="row"><h2>Rate Limiting</h2></div>
+        <table>
+            <tr>
+                <td>Rate Window &nbsp;&nbsp;</td>
+                <td id="window"></td>
+
+            </tr>
+            <tr>
+                <td>Limit</td>
+                <td id="limit"></td>
+            </tr>
+        </table>
 
         <hr class="hr">
 <div class="footer"><input type="button" class="btn btn-" value="Logout" onclick="logOut()"><p></p><br><br></div>
@@ -181,6 +193,10 @@
 		}
 	}
 	check_login();
+
+	 function validateIPHost(data){
+		return  /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(data);
+	}
 
 	async function getRoutesTable(){
 		const url = "../proxy";
@@ -269,11 +285,35 @@
 			console.log(json_response)
 		}
     }
+    async function getRateLimit(){
+		const url = "../ratelimit";
+		let options = {
+			method: 'GET', // *GET, POST, PUT, DELETE, etc.
+			mode: 'cors', // no-cors, *cors, same-origin
+			cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+			credentials: 'same-origin', // include, *same-origin, omit
+			headers: {
+				'Content-Type': 'application/json',
+				'x-access-token': await localStorage.getItem("x-access-token")
+			},
+			redirect: 'follow', // manual, *follow, error
+			referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+		};
+		let response =  await fetch(url, options);
+		let json_response = await response.json();
+		let rate = await json_response.rate.toString();
+		let win = await json_response.window.toString();
+
+		$(`<h6>${win/60000} min</h6>`).appendTo("#window");
+		$(`<h6>${rate} req</h6>`).appendTo("#limit");
+		console.log( await json_response)
+    }
 
 	$(document).ready( function() {
 		getRoutesTable();
 		getBlackList();
 		getWhiteList();
+		getRateLimit();
 	});
 
 	async function addNewRoute() {
@@ -314,13 +354,17 @@
 
 	}
 
-	function deleteRoute(route) {
+	function deleteRoute() {
 
 	}
 	async function addIPtoBlackList() {
-		let ip = $('#addBlackListIp').val()
+		let ip = $('#addBlackListIp').val();
+		if (!validateIPHost(ip)){
+			alert("Invalid IP/ Host name");
+			return
+        }
 		let token = await localStorage.getItem("x-access-token")
-        console.log(token)
+        //console.log(token)
 		console.log(ip);
 		const url = "../iplist/blacklist";
 		let options = {
@@ -347,6 +391,10 @@
 	}
 	async function removeIPFromBlackList() {
 		let ip = $('#removeBlackListIp').val();
+		if (!validateIPHost(ip)){
+			alert("Invalid IP/ Host name");
+			return
+		}
 		console.log(ip);
 		const url = "../iplist/blacklist";
 		let options = {
@@ -372,6 +420,11 @@
 	async function addIPtoWhiteList() {
 		let ip = $('#addWhiteListIp').val();
 		console.log(ip);
+		if (!validateIPHost(ip)){
+			alert("Invalid IP/ Host name");
+			return
+		}
+
 		const url = "../iplist/whitelist";
 		let options = {
 			method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -396,6 +449,10 @@
 	async function removeIPFromWhitelist() {
 		let ip = $('#removeBlackListIp').val();
 		console.log(ip);
+		if (!validateIPHost(ip)){
+			alert("Invalid IP/ Host name");
+			return
+		}
 		const url = "../iplist/whitelist";
 		let options = {
 			method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
