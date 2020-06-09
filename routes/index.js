@@ -1,5 +1,6 @@
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const auth = require('../middleware/auth');
 
 
 module.exports = function (app) {
@@ -19,7 +20,7 @@ module.exports = function (app) {
 	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(bodyParser.json());
 	app.use(cookieParser());
-	app.use("/iplist", require("./iplist"));
+	app.use("/iplist",auth.verifyToken, require("./iplist"));
 	app.use("/login", require("./login"));
 	//Root route-REMOVE this
 	app.use("/", (req, res) => {
