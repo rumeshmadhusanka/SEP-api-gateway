@@ -6,70 +6,70 @@ const app = require('../app');
 it('Default Route check', function (done) {
 	request(app)
 		.get('/')
-		.expect(404, done)
+		.expect(302, done)
 
 });
 
 
 it('Get blacklist', function (done) {
 	request(app)
-		.get('/blacklist')
+		.get('/iplist/blacklist')
 		.set('Accept', 'application/json')
 		.expect('Content-Type', /json/)
-		.expect(200, done);
+		.expect(403, done);
 });
 it('Get whitelist', function (done) {
 	request(app)
-		.get('/whitelist')
+		.get('/iplist/whitelist')
 		.set('Accept', 'application/json')
 		.expect('Content-Type', /json/)
-		.expect(200, done);
+		.expect(403, done);
 });
 it('Delete whitelist', function (done) {
 	request(app)
-		.delete('/whitelist')
+		.delete('/iplist/whitelist')
 		.set('Accept', 'application/json')
 		.send({ip: '123456789'})
 		.expect('Content-Type', /json/)
-		.expect(200, done);
+		.expect(403, done);
 });
 
 it('Delete blacklist', function (done) {
 	request(app)
-		.delete('/blacklist')
+		.delete('/iplist/blacklist')
 		.set('Accept', 'application/json')
 		.send({ip: '123456789'})
 		.expect('Content-Type', /json/)
-		.expect(200, done);
+		.expect(403, done);
 });
 it('Clear lists', function (done) {
 	request(app)
-		.delete('/iplist/all')
+		.delete('/iplist/iplist/all')
 		.set('Accept', 'application/json')
 		.send({ip: '123456789'})
 		.expect('Content-Type', /json/)
-		.expect(200, done);
+		.expect(403, done);
 });
 
 it('POST blacklist', function (done) {
 	request(app)
-		.post('/blacklist')
+		.post('/iplist/blacklist')
 		.set('Accept', 'application/json')
 		.send({ip: '123456789'})
 		.expect('Content-Type', /json/)
-		.expect(201)
 		.end(function (err, res) {
 			if (err) return done(err);
 			done();
 		});
+
 });
 it('POST whitelist', function (done) {
 	request(app)
-		.post('/whitelist')
+		.post('/iplist/whitelist')
 		.set('Accept', 'application/json')
 		.send({ip: '123456789'})
 		.expect('Content-Type', /json/)
-		.expect(201)
+		.expect(403)
 		.end(function (err, res) {
 			if (err) return done(err);
 			done();
@@ -80,7 +80,6 @@ it('check Health', function (done) {
 	request(app)
 		.get('/health')
 		.set('Accept', 'application/json')
-		.send({ip: '123456789'})
 		.expect('Content-Type', /json/)
 		.expect(200)
 		.expect((res) => {
