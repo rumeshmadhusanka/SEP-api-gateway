@@ -60,8 +60,12 @@ router.post('/whitelist', async function (req, res, next) {
 router.delete('/blacklist', async function (req, res, next) {
 	let ip = req.body.ip;
 	try {
-		await blackList.removeIPFromBlackList(ip);
-		res.status(200).json({"msg": "Removed " + ip + " from blacklist"});
+		if(!ip){
+			res.status(403).json({"msg": "IP address not defined"});
+		}else{
+			await blackList.removeIPFromBlackList(ip);
+			res.status(200).json({"msg": "Removed " + ip + " from blacklist"});
+		}
 	} catch (e) {
 		console.log(e);
 		await res.status(502).json({"message": e.name + " " + e.message})
@@ -71,8 +75,12 @@ router.delete('/blacklist', async function (req, res, next) {
 router.delete('/whitelist', async function (req, res, next) {
 	let ip = req.body.ip;
 	try {
-		await blackList.removeIPFromWhiteList(ip);
-		res.status(200).json({"msg": "Removed " + ip + " from whitelist"});
+		if (!ip){
+			res.status(403).json({"msg": "IP address not defined"});
+		}else{
+			await blackList.removeIPFromWhiteList(ip);
+			res.status(200).json({"msg": "Removed " + ip + " from whitelist"});
+		}
 	} catch (e) {
 		console.log(e);
 		await res.status(502).json({"message": e.name + " " + e.message})
