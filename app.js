@@ -92,19 +92,19 @@ try {
 		app.use(Object.keys(data[i].pathRewrite)[0].toString(), proxy_function_list[func_name]())
 	}
 
-	app.get('/proxy', function (req, res) {
+	app.get('/proxy', auth.verifyToken, function (req, res) {
 		res.json(proxy_object_list)
 	});
 
-	app.post('/proxy',  function (req, res) {
+	app.post('/proxy', auth.verifyToken, function (req, res) {
 		try {
 
 			let data = "";
 
-			 req.on('data', function (chunk) {
+			req.on('data', function (chunk) {
 				data += chunk
 			});
-			 req.on('end', function () {
+			req.on('end', function () {
 				req.rawBody = data;
 				if (data) {
 					req.body = JSON.parse(data);
@@ -134,12 +134,11 @@ try {
 						"path": object,
 						"target": data[0].target
 					})
-				}catch (e) {
+				} catch (e) {
 					res.status(502).json({"message": e.toString()});
 				}
 
 			});
-
 
 
 		} catch (e) {
@@ -150,7 +149,7 @@ try {
 
 	});
 
-	app.delete('/proxy/:r', function (req, res) {
+	app.delete('/proxy/:r', auth.verifyToken, function (req, res) {
 		try {
 			let r = req.params.r;
 			console.log(r);
@@ -165,11 +164,11 @@ try {
 					route.route.stack.forEach(removeMiddleware);
 			}
 
-			for (let i = 0; i < proxy_object_list.length; i++) {
-				if (proxy_object_list[i].regexp.toString().includes(r)) {
-
-				}
-			}
+			// for (let i = 0; i < proxy_object_list.length; i++) {
+			// 	if (proxy_object_list[i].regexp.toString().includes(r)) {
+			//
+			// 	}
+			// }
 
 			res.json(routes);
 			console.log(routes);
