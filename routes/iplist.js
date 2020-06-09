@@ -30,7 +30,7 @@ router.post('/blacklist', async function (req, res, next) {
 			await blackList.addIPtoBlackList(ip);
 			res.status(201).json({"msg": "Added " + ip + " to blacklist"});
 		} else {
-			res.status(401).json({"message": "ERR::Invalid ip address/host name"})
+			res.status(422).json({"message": "ERR::Invalid ip address/host name"})
 		}
 
 	} catch (e) {
@@ -47,7 +47,7 @@ router.post('/whitelist', async function (req, res, next) {
 			await blackList.addToWhiteList(ip);
 			res.status(201).json({"msg": "Added " + ip + " to whitelist"});
 		} else {
-			res.status(401).json({"message": "ERR::Invalid ip address/host name"})
+			res.status(422).json({"message": "ERR::Invalid ip address/host name"})
 		}
 
 	} catch (e) {
@@ -61,7 +61,7 @@ router.delete('/blacklist', async function (req, res, next) {
 	let ip = req.body.ip;
 	try {
 		if(!ip){
-			res.status(403).json({"msg": "IP address not defined"});
+			res.status(422).json({"msg": "IP address not defined"});
 		}else{
 			await blackList.removeIPFromBlackList(ip);
 			res.status(200).json({"msg": "Removed " + ip + " from blacklist"});
@@ -76,7 +76,7 @@ router.delete('/whitelist', async function (req, res, next) {
 	let ip = req.body.ip;
 	try {
 		if (!ip){
-			res.status(403).json({"msg": "IP address not defined"});
+			res.status(422).json({"msg": "IP address not defined"});
 		}else{
 			await blackList.removeIPFromWhiteList(ip);
 			res.status(200).json({"msg": "Removed " + ip + " from whitelist"});
