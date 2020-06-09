@@ -24,24 +24,37 @@ class IPList {
 	async addToWhiteList(ip) {
 		for (let i = 0; i < this.black_list.length; i++) {
 			if (ip === this.black_list[i]) {
-				this.black_list.splice(i, 1)
+				this.black_list.splice(i, 1);
 				break
 			}
+		}
+		for (let i = 0; i < this.white_list.length; i++) {
+			if (ip===this.white_list[i]){
+				console.log("Already on whitelist");
+				return ;
+			}
+
 		}
 		this.white_list.push(ip);
 	}
 
 	async removeIPFromBlackList(ip) {
 
-		let index = this.black_list.findIndex(ele => ele === ip);
-		console.log(this.black_list.splice(index, 1))
+		const index = this.black_list.indexOf(ip);
+		if (index > -1) {
+			this.black_list.splice(index, 1);
+		}
+		console.log("Removed ",ip)
 
 	}
 
 	async removeIPFromWhiteList(ip) {
 
-		let index = this.white_list.findIndex(ele => ele === ip);
-		console.log(this.white_list.splice(index, 1))
+		const index = this.white_list.indexOf(ip);
+		if (index > -1) {
+			this.white_list.splice(index, 1);
+		}
+		console.log("Removed ",ip)
 
 	}
 
