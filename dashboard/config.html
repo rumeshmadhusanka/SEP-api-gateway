@@ -225,7 +225,7 @@
                         <tr><td>ws</td><td>${json_response[i].ws}</td></tr>
                         <tr><td>pathRewrite:</td><td></td></tr>
                         <tr><td>${Object.keys(json_response[i].pathRewrite)[0]}</td><td>${Object.values(json_response[i].pathRewrite)[0]}</td></tr>
-                        <tr><td><input class="btn btn-danger" type="button" value="Delete Route"></td><td></td></tr>
+
                     </table>
                 </div>
             </div>`;
@@ -316,17 +316,41 @@
 		getRateLimit();
 	});
 
+	 function validateURL(url){
+	 	return /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(:[0-9]+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/.test(url);
+
+     }
+
 	async function addNewRoute() {
 		let target = $('#route-target').val();
-		let changeOrigin = $('#route-changeOrigin').val() === "true";
-		let ws = $('#route-ws').val() === "true";
-		let fromPath = $('#route-pathKey');
-        let toPath = $('#route-pathVal');
+		let changeOrigin = $('#route-changeOrigin').val() ;
+		let ws = $('#route-ws').val();
+		let fromPath = $('#route-pathKey').val();
+        let toPath = $('#route-pathVal').val();
+
+        if (!validateURL(target)){
+        	alert("Invalid URL");
+            return
+        }
+        if (!(changeOrigin==="true" || changeOrigin==="false")){
+        	alert("Invalid value for Change Origin");
+            return ;
+        }
+        if (!(ws==="true" || ws==="false")){
+			alert("Invalid value for Web sockets");
+			return ;
+        }
+		if (fromPath[0]!=="^"){
+			console.log(fromPath)
+			alert("Invalid value for From Path");
+			return ;
+		}
+
 
         let data = {
         	target: target,
-            changeOrigin: changeOrigin,
-            ws: ws,
+            changeOrigin: changeOrigin === "true",
+            ws: ws === "true",
 			pathRewrite:{}
         };
         data.pathRewrite[fromPath] = toPath;
