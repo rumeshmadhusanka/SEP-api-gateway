@@ -15,6 +15,11 @@ class IPList {
 				break
 			}
 		}
+		for (let i = 0; i < this.black_list.length; i++) {
+			if (ip === this.black_list[i]){
+				return ;
+			}
+		}
 		if (!is_in) {
 			this.black_list.push(ip);
 			console.log("Added to blacklist: " + ip)
